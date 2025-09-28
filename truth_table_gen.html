@@ -415,9 +415,9 @@
             
             getVariables(expression) {
                 // Remove all operators and parentheses, then find unique letters
-                const cleanExpr = expression.replace(/[&v→↔~()\s]/g, '');
-                const variables = [...new Set(cleanExpr.match(/[A-Za-z]/g))];
-                return variables ? variables.sort() : [];
+                const cleanExpr = expression.replace(/[^A-Z]/g, '');
+                const variables = [...new Set(cleanExpr)];
+                return variables.sort();
             }
             
             tokenize(expression) {
@@ -425,7 +425,7 @@
                 const tokens = [];
                 let current = '';
                 
-                for (let char of expression.replace(/\s/g, '')) {
+                for (let char of expression.replace(/\s+/g, '')) {
                     if (char.match(/[A-Za-z]/)) {
                         current += char;
                     } else {
@@ -515,6 +515,18 @@
                     return;
                 }
                 
+                // Validate for lowercase variables (excluding 'v' for OR)
+                const invalidChars = expression.match(/[a-uw-z]/g);
+                if (invalidChars) {
+                    this.showMessage(`Invalid characters found: ${[...new Set(invalidChars)].join(', ')}. Variables must be uppercase letters.`, 'error');
+                    return;
+                }
+
+                if (!this.isWellFormed(expression)) {
+                    this.showMessage('Expression is not well-formed. All binary operations (e.g., A & B) must be enclosed in parentheses like (A & B).', 'error');
+                    return;
+                }
+
                 const variables = this.getVariables(expression);
                 
                 if (variables.length === 0) {
@@ -557,6 +569,30 @@
                 return combinations.reverse();
             }
             
+            isWellFormed(expression) {
+                // A single uppercase letter is a valid WFF.
+                if (/^[A-Z]$/.test(expression.trim())) {
+                    return true;
+                }
+
+                let balance = 0;
+                for (const char of expression) {
+                    if (char === '(') balance++;
+                    else if (char === ')') balance--;
+                    if (balance < 0) return false; // Closing parenthesis before an opening one
+                }
+                if (balance !== 0) return false; // Unbalanced parentheses
+
+                // Check for binary operators outside of parentheses
+                balance = 0;
+                for (const char of expression) {
+                    if (char === '(') balance++;
+                    else if (char === ')') balance--;
+                    else if (balance === 0 && '&v→↔'.includes(char)) return false;
+                }
+                return true;
+            }
+
             renderTruthTable(variables, expression, combinations, postfix) {
                 const table = document.getElementById('truthTable');
                 table.innerHTML = '';
