@@ -422,28 +422,14 @@
             
             tokenize(expression) {
                 // Convert expression to tokens (variables, operators, parentheses)
-                const tokens = [];
-                let current = '';
-                
-                for (let char of expression.replace(/\s+/g, '')) {
-                    if (char.match(/[A-Za-z]/)) {
-                        current += char;
-                    } else {
-                        if (current) {
-                            tokens.push(current);
-                            current = '';
-                        }
-                        
-                        if ('&v→↔~()'.includes(char)) {
-                            tokens.push(char);
-                        }
-                    }
-                }
-                
-                if (current) {
-                    tokens.push(current);
-                }
-                
+                // Add spaces around all operators and parentheses to ensure they are tokenized correctly
+                const spacedExpression = expression
+                    .replace(/([&v→↔~()])/g, ' $1 ')
+                    .trim();
+
+                // Split by spaces and filter out any empty strings
+                const tokens = spacedExpression.split(/\s+/).filter(token => token.length > 0);
+
                 return tokens;
             }
             
