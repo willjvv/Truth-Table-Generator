@@ -185,9 +185,10 @@
 
         .table-container {
             overflow-x: auto;
-            border: 1px solid white;
+            border: 1px solid black;
             border-radius: 8px;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);        }
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
 
         #truthTable {
             width: 100%;
@@ -200,12 +201,12 @@
             color: white;
             padding: 15px;
             text-align: center;
-            font-weight: 600;        }
+            font-weight: 600;
+        }
 
         #truthTable td {
             padding: 12px;
             text-align: center;
-            border: 1px solid #ddd;
         }
 
         #truthTable .sub-expr-cell {
@@ -220,6 +221,10 @@
 
         tr:hover {
             background-color: #e8f4fc;
+        }
+
+        .main-operator-header {
+            background-color: #f7ef8a !important;
         }
 
         .true-cell {
@@ -526,12 +531,30 @@
                 try {
                     const tokens = this.tokenize(expression);
                     const postfix = this.infixToPostfix(tokens);
+
+                    // Find the main operator to highlight it
+                    let mainOperatorIndex = -1;
+                    if (postfix.length > 0) {
+                        const mainOperatorToken = postfix[postfix.length - 1];
+                        if (mainOperatorToken in this.operators) {
+                            // Find the last occurrence of this operator in the original tokens
+                            // This is a simple way to find it, works for many cases.
+                            for (let i = tokens.length - 1; i >= 0; i--) {
+                                if (tokens[i] === mainOperatorToken) {
+                                    mainOperatorIndex = i;
+                                    break;
+                                }
+                            }
+                        } else if (tokens.length === 1) { // Case for a single variable like "P"
+                            mainOperatorIndex = 0;
+                        }
+                    }
                     
                     // Generate all possible truth value combinations (starting with true)
                     const combinations = this.generateCombinations(variables.length);
                     
                     // Create the truth table
-                    this.renderTruthTable(variables, tokens, combinations, postfix);
+                    this.renderTruthTable(variables, tokens, combinations, postfix, mainOperatorIndex);
                     this.showMessage(`Truth table generated successfully for: ${expression}`, 'success');
                     
                 } catch (error) {
@@ -582,7 +605,7 @@
                 return true;
             }
 
-            renderTruthTable(variables, expressionTokens, combinations, postfix) {
+            renderTruthTable(variables, expressionTokens, combinations, postfix, mainOperatorIndex) {
                 const table = document.getElementById('truthTable');
                 table.innerHTML = '';
                 
@@ -626,6 +649,9 @@
                     th.textContent = token;
                     th.classList.add('result-separator');
                     th.style.minWidth = '30px';
+                    if (index === mainOperatorIndex) {
+                        th.classList.add('main-operator-header');
+                    }
                     headerRow.appendChild(th);
                 });
                 
