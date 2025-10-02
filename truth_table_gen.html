@@ -187,10 +187,9 @@
             overflow-x: auto;
             border: 1px solid white;
             border-radius: 8px;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-        }
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);        }
 
-        table {
+        #truthTable {
             width: 100%;
             border-collapse: collapse;
             font-size: 1.2rem;
@@ -201,12 +200,16 @@
             color: white;
             padding: 15px;
             text-align: center;
-            font-weight: 600;
-            border: 1px solid #2c3e50;
+            font-weight: 600;        }
+
+        #truthTable td {
+            padding: 12px;
+            text-align: center;
+            border: 1px solid #ddd;
         }
 
-        td {
-            padding: 12px;
+        #truthTable .sub-expr-cell {
+            padding: 12px 2px;
             text-align: center;
             border: 1px solid #535353;
         }
@@ -528,7 +531,7 @@
                     const combinations = this.generateCombinations(variables.length);
                     
                     // Create the truth table
-                    this.renderTruthTable(variables, expression, combinations, postfix);
+                    this.renderTruthTable(variables, tokens, combinations, postfix);
                     this.showMessage(`Truth table generated successfully for: ${expression}`, 'success');
                     
                 } catch (error) {
@@ -579,7 +582,7 @@
                 return true;
             }
 
-            renderTruthTable(variables, expression, combinations, postfix) {
+            renderTruthTable(variables, expressionTokens, combinations, postfix) {
                 const table = document.getElementById('truthTable');
                 table.innerHTML = '';
                 
@@ -587,15 +590,44 @@
                 const headerRow = document.createElement('tr');
                 
                 variables.forEach(variable => {
-                    const th = document.createElement('th');
-                    th.textContent = variable;
-                    headerRow.appendChild(th);
+                    const th = document.createElement('th'); th.textContent = variable; headerRow.appendChild(th);
                 });
                 
-                const resultTh = document.createElement('th');
-                resultTh.textContent = expression;
-                resultTh.classList.add('result-separator');
-                headerRow.appendChild(resultTh);
+                // Pre-process tokens to merge parentheses for display
+                let displayTokens = [...expressionTokens];
+                // Merge right parentheses (backwards)
+                for (let i = displayTokens.length - 1; i >= 0; i--) {
+                    if (displayTokens[i] === ')') {
+                        for (let j = i - 1; j >= 0; j--) {
+                            if (displayTokens[j] && !['(', ')'].includes(displayTokens[j])) {
+                                displayTokens[j] += ')';
+                                displayTokens[i] = null;
+                                break;
+                            }
+                        }
+                    }
+                }
+                // Merge left parentheses (forwards)
+                for (let i = 0; i < displayTokens.length; i++) {
+                    if (displayTokens[i] === '(') {
+                        for (let j = i + 1; j < displayTokens.length; j++) {
+                            if (displayTokens[j] && !['(', ')'].includes(displayTokens[j])) {
+                                displayTokens[j] = '(' + displayTokens[j];
+                                displayTokens[i] = null;
+                                break;
+                            }
+                        }
+                    }
+                }
+
+                displayTokens.forEach((token, index) => {
+                    if (token === null) return; // Skip merged parentheses
+                    const th = document.createElement('th');
+                    th.textContent = token;
+                    th.classList.add('result-separator');
+                    th.style.minWidth = '30px';
+                    headerRow.appendChild(th);
+                });
                 
                 table.appendChild(headerRow);
                 
@@ -616,22 +648,74 @@
                     
                     // Calculate and add result
                     try {
-                        const result = this.evaluatePostfix(postfix, values);
-                        const resultTd = document.createElement('td');
-                        resultTd.textContent = result ? 'T' : 'F';
-                        resultTd.className = result ? 'true-cell' : 'false-cell'; // Base classes
-                        resultTd.classList.add('result-separator');
-                        row.appendChild(resultTd);
+                        const allResults = this.evaluateWithIntermediateSteps(expressionTokens, postfix, values);
+                        
+                        expressionTokens.forEach((token, index) => {
+                            if (displayTokens[index] === null) return; // Don't create a cell for a merged parenthesis
+
+                            const resultTd = document.createElement('td');
+                            resultTd.classList.add('result-separator', 'sub-expr-cell');
+                            
+                            if (index in allResults) {
+                                const result = allResults[index];
+                                resultTd.textContent = result ? 'T' : 'F';
+                                resultTd.classList.add(result ? 'true-cell' : 'false-cell');
+                            } // else: it's a parenthesis that wasn't merged, leave cell blank
+                            row.appendChild(resultTd);
+                        });
+
                     } catch (error) {
                         const resultTd = document.createElement('td');
                         resultTd.textContent = 'Error';
                         resultTd.className = 'false-cell';
+                        resultTd.colSpan = expressionTokens.length;
                         resultTd.classList.add('result-separator');
                         row.appendChild(resultTd);
                     }
                     
                     table.appendChild(row);
                 });
+            }
+
+            evaluateWithIntermediateSteps(expressionTokens, postfix, values) {
+                const stack = [];
+                const results = {}; // Store results by original token index
+
+                // Create a map from postfix token to its original index
+                const tokenIndices = {};
+                const tempTokens = [...expressionTokens];
+                for (const pToken of postfix) {
+                    if (pToken in this.operators || pToken in values) {
+                        const idx = tempTokens.indexOf(pToken);
+                        if (!tokenIndices[pToken]) tokenIndices[pToken] = [];
+                        tokenIndices[pToken].push(idx);
+                        tempTokens[idx] = null; // Mark as used
+                    }
+                }
+
+                for (const pToken of postfix) {
+                    if (pToken in values) {
+                        const val = values[pToken];
+                        const idx = tokenIndices[pToken].shift();
+                        results[idx] = val;
+                        stack.push({ token: pToken, value: val });
+                    } else if (pToken in this.operators) {
+                        const opInfo = this.operators[pToken];
+                        const opIdx = tokenIndices[pToken].shift();
+                        let result;
+                        if (opInfo.type === 'unary') {
+                            const operand = stack.pop();
+                            result = opInfo.eval(operand.value);
+                        } else {
+                            const right = stack.pop();
+                            const left = stack.pop();
+                            result = opInfo.eval(left.value, right.value);
+                        }
+                        results[opIdx] = result;
+                        stack.push({ token: pToken, value: result });
+                    }
+                }
+                return results;
             }
             
             showMessage(message, type) {
