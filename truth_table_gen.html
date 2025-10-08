@@ -185,8 +185,8 @@
 
         .table-container {
             overflow-x: auto;
-            border: 1px solid black;
             border-radius: 8px;
+            border: 1px solid #dfe6ee;
             box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
         }
 
@@ -202,17 +202,13 @@
             padding: 15px;
             text-align: center;
             font-weight: 600;
+            border-bottom: 2px solid #4a627a;
         }
 
         #truthTable td {
             padding: 12px;
             text-align: center;
-        }
-
-        #truthTable .sub-expr-cell {
-            padding: 12px 2px;
-            text-align: center;
-            border: 1px solid #535353;
+            border-bottom: 1px solid #dfe6ee;
         }
 
         tr:nth-child(even) {
@@ -224,7 +220,12 @@
         }
 
         .main-operator-header {
-            background-color: #f7ef8a !important;
+            background-color: #ffd700 !important; /* Gold */
+            color: #3d3d3d !important;
+        }
+
+        .main-operator-col {
+            background-color: #fffacd !important; /* LemonChiffon - a light gold */
         }
 
         .true-cell {
@@ -240,7 +241,7 @@
         }
 
         .result-separator {
-            border-left: 3px solid #2c3e50 !important;
+            border-left: 2px solid #2c3e50 !important;
         }
 
         .error-message {
@@ -679,15 +680,18 @@
                         expressionTokens.forEach((token, index) => {
                             if (displayTokens[index] === null) return; // Don't create a cell for a merged parenthesis
 
-                            const resultTd = document.createElement('td');
-                            resultTd.classList.add('result-separator', 'sub-expr-cell');
+                            const td = document.createElement('td');
+                            td.classList.add('result-separator');
+                            if (index === mainOperatorIndex) {
+                                td.classList.add('main-operator-col');
+                            }
                             
                             if (index in allResults) {
                                 const result = allResults[index];
-                                resultTd.textContent = result ? 'T' : 'F';
-                                resultTd.classList.add(result ? 'true-cell' : 'false-cell');
+                                td.textContent = result ? 'T' : 'F';
+                                td.classList.add(result ? 'true-cell' : 'false-cell');
                             } // else: it's a parenthesis that wasn't merged, leave cell blank
-                            row.appendChild(resultTd);
+                            row.appendChild(td);
                         });
 
                     } catch (error) {
