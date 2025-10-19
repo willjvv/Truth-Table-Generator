@@ -5,11 +5,29 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Truth Table Generator</title>
     <style>
+        :root {
+            --primary-color: #3498db;
+            --primary-hover-color: #2980b9;
+            --secondary-color: #2c3e50;
+            --light-bg-color: #f8f9fa;
+            --success-color: #27ae60;
+            --success-bg-color: #d4edda;
+            --success-text-color: #155724;
+            --error-color: #e74c3c;
+            --error-bg-color: #f8d7da;
+            --error-text-color: #721c24;
+            --white-color: #fff;
+            --border-color: #ddd;
+            --border-radius-sm: 6px;
+            --border-radius-md: 8px;
+            --border-radius-lg: 15px;
+        }
+
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; /* This is a good default font stack */
         }
 
         body {
@@ -21,15 +39,15 @@
         .container {
             max-width: 1200px;
             margin: 0 auto;
-            background: white;
-            border-radius: 15px;
+            background: var(--white-color);
+            border-radius: var(--border-radius-lg);
             box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
             overflow: hidden;
         }
 
         header {
-            background: #2c3e50;
-            color: white;
+            background: var(--secondary-color);
+            color: var(--white-color);
             padding: 20px;
             text-align: center;
         }
@@ -61,34 +79,34 @@
             margin-bottom: 10px;
             font-weight: 600;
             font-size: 1.2rem;
-            color: #2c3e50;
+            color: var(--secondary-color);
         }
 
-        #expressionInput {
+        .expression-input {
             width: 100%;
             padding: 15px;
             font-size: 1.3rem;
-            border: 2px solid #ddd;
-            border-radius: 8px;
+            border: 2px solid var(--border-color);
+            border-radius: var(--border-radius-md);
             outline: none;
             transition: border-color 0.3s;
         }
 
-        #expressionInput:focus {
-            border-color: #3498db;
+        .expression-input:focus {
+            border-color: var(--primary-color);
         }
 
         .symbols-container {
-            background: #f8f9fa;
+            background: var(--light-bg-color);
             padding: 20px;
-            border-radius: 8px;
+            border-radius: var(--border-radius-md);
             margin-bottom: 20px;
         }
 
         .symbols-title {
             font-weight: 600;
             margin-bottom: 15px;
-            color: #2c3e50;
+            color: var(--secondary-color);
         }
 
         .symbol-buttons {
@@ -97,23 +115,28 @@
             gap: 10px;
         }
 
-        .symbol-btn {
-            padding: 12px;
-            background: #3498db;
-            color: white;
-            border: none;
-            border-radius: 6px;
+        /* --- Button Styles --- */
+        .btn {
+            padding: 12px 25px;
             font-size: 1.1rem;
+            border: none;
+            border-radius: var(--border-radius-sm);
             cursor: pointer;
-            transition: background 0.3s, transform 0.1s;
+            transition: all 0.3s;
+            color: var(--white-color);
+        }
+
+        .btn:active {
+            transform: scale(0.98);
+        }
+
+        .symbol-btn {
+            padding: 12px; /* Override for specific padding */
+            background: var(--primary-color);
         }
 
         .symbol-btn:hover {
-            background: #2980b9;
-        }
-
-        .symbol-btn:active {
-            transform: scale(0.98);
+            background: var(--primary-hover-color);
         }
 
         .control-buttons {
@@ -122,41 +145,29 @@
             margin-top: 20px;
         }
 
-        .control-btn {
-            padding: 12px 25px;
-            font-size: 1.1rem;
-            border: none;
-            border-radius: 6px;
-            cursor: pointer;
-            transition: all 0.3s;
-        }
-
         #generateBtn {
-            background: #27ae60;
-            color: white;
+            background: var(--success-color);
             flex: 2;
         }
 
         #generateBtn:hover {
-            background: #219653;
+            background: #219653; /* Darker success color */
         }
 
         #clearBtn {
-            background: #e74c3c;
-            color: white;
+            background: var(--error-color);
             flex: 1;
         }
 
         #clearBtn:hover {
-            background: #c0392b;
+            background: #c0392b; /* Darker error color */
         }
 
-        .preview-section {
-            background: #f1f8ff;
+        /* --- Info/Message Box Styles --- */
+        .info-box {
             padding: 15px;
-            border-radius: 8px;
+            border-radius: var(--border-radius-md);
             margin-bottom: 20px;
-            border-left: 4px solid #3498db;
         }
 
         .preview-label {
@@ -164,6 +175,12 @@
             margin-bottom: 10px;
             color: #2c3e50;
         }
+
+        .preview-section {
+            background: #f1f8ff; /* A light blue */
+            border-left: 4px solid var(--primary-color);
+        }
+
 
         #expressionPreview {
             font-size: 1.4rem;
@@ -179,13 +196,13 @@
         .table-title {
             font-size: 1.5rem;
             margin-bottom: 15px;
-            color: #2c3e50;
+            color: var(--secondary-color);
             text-align: center; 
         }
 
         .table-container {
             overflow-x: auto;
-            border-radius: 8px;
+            border-radius: var(--border-radius-md);
             box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
         }
 
@@ -197,7 +214,7 @@
 
         th {
             background: #34495e;
-            color: white;
+            color: var(--white-color);
             padding: 15px;
             text-align: center;
             font-weight: 600;
@@ -211,7 +228,7 @@
         }
 
         tr:nth-child(even) {
-            background-color: #f8f9fa;
+            background-color: var(--light-bg-color);
         }
 
         tr:hover {
@@ -228,37 +245,33 @@
         }
 
         .true-cell {
-            background-color: #d4edda;
-            color: #155724;
+            background-color: var(--success-bg-color);
+            color: var(--success-text-color);
             font-weight: 600;
         }
 
         .false-cell {
-            background-color: #f8d7da;
-            color: #721c24;
+            background-color: var(--error-bg-color);
+            color: var(--error-text-color);
             font-weight: 600;
         }
 
         .result-separator {
-            border-left: 2px solid #2c3e50 !important;
+            border-left: 2px solid var(--secondary-color) !important;
         }
 
         .error-message {
-            background: #f8d7da;
-            color: #721c24;
-            padding: 15px;
-            border-radius: 8px;
+            background: var(--error-bg-color);
+            color: var(--error-text-color);
             margin-top: 20px;
-            border-left: 4px solid #e74c3c;
+            border-left: 4px solid var(--error-color);
         }
 
         .success-message {
-            background: #d4edda;
-            color: #155724;
-            padding: 15px;
-            border-radius: 8px;
+            background: var(--success-bg-color);
+            color: var(--success-text-color);
             margin-top: 20px;
-            border-left: 4px solid #27ae60;
+            border-left: 4px solid var(--success-color);
         }
 
         @media (max-width: 768px) {
@@ -288,29 +301,29 @@
             <section class="input-section">
                 <div class="input-group">
                     <label for="expressionInput">Enter Logical Expression:</label>
-                    <input type="text" id="expressionInput" placeholder="e.g., (P & (Q v ~R))" autofocus>
+                    <input type="text" id="expressionInput" class="expression-input" placeholder="e.g., (P & (Q v ~R))" autofocus>
                 </div>
                 
                 <div class="symbols-container">
                     <div class="symbols-title">Logical Symbols:</div>
                     <div class="symbol-buttons">
-                        <button class="symbol-btn" data-symbol="~">~ (Tilde)</button>
-                        <button class="symbol-btn" data-symbol="&">& (Ampersand)</button>
-                        <button class="symbol-btn" data-symbol="v">v (Wedge)</button>
-                        <button class="symbol-btn" data-symbol="→">→ (Arrow)</button>
-                        <button class="symbol-btn" data-symbol="↔">↔ (Double Arrow)</button>
-                        <button class="symbol-btn" id="clearInputBtn">Clear Input</button>
+                        <button class="btn symbol-btn" data-symbol="~">~ (Tilde)</button>
+                        <button class="btn symbol-btn" data-symbol="&">& (Ampersand)</button>
+                        <button class="btn symbol-btn" data-symbol="v">v (Wedge)</button>
+                        <button class="btn symbol-btn" data-symbol="→">→ (Arrow)</button>
+                        <button class="btn symbol-btn" data-symbol="↔">↔ (Double Arrow)</button>
+                        <button class="btn symbol-btn" id="clearInputBtn">Clear Input</button>
                     </div>
                 </div>
                 
-                <div class="preview-section">
+                <div class="info-box preview-section">
                     <div class="preview-label">Expression Preview:</div>
                     <div id="expressionPreview"></div>
                 </div>
                 
                 <div class="control-buttons">
-                    <button class="control-btn" id="generateBtn">Generate Truth Table</button>
-                    <button class="control-btn" id="clearBtn">Clear Table</button>
+                    <button class="btn" id="generateBtn">Generate Truth Table</button>
+                    <button class="btn" id="clearBtn">Clear Table</button>
                 </div>
             </section>
             
@@ -323,7 +336,7 @@
                 </div>
             </section>
             
-            <div id="messageArea"></div>
+            <div id="messageArea" class="info-box"></div>
         </div>
     </div>
 
@@ -343,30 +356,26 @@
             }
             
             initializeEventListeners() {
-                // Symbol buttons
                 document.querySelectorAll('.symbol-btn[data-symbol]').forEach(btn => {
                     btn.addEventListener('click', () => {
                         this.insertSymbol(btn.getAttribute('data-symbol'));
                     });
                 });
                 
-                // Clear input button
                 document.getElementById('clearInputBtn').addEventListener('click', () => {
                     this.clearInput();
                 });
                 
-                // Generate button
                 document.getElementById('generateBtn').addEventListener('click', () => {
                     this.generateTruthTable();
                 });
                 
-                // Clear table button
                 document.getElementById('clearBtn').addEventListener('click', () => {
                     this.clearAll();
                 });
                 
-                // Input field events
                 const expressionInput = document.getElementById('expressionInput');
+                
                 expressionInput.addEventListener('input', () => {
                     this.updatePreview();
                 });
@@ -408,7 +417,7 @@
                 const preview = document.getElementById('expressionPreview');
                 
                 if (expression.trim()) {
-                    // Format the expression with spacing for better readability
+                    // Add spacing around operators for better readability in the preview.
                     let formatted = expression
                         .replace(/([&v→↔])/g, ' $1 ')
                         .replace(/(~)\s*/g, '$1')
@@ -422,20 +431,17 @@
             }
             
             getVariables(expression) {
-                // Remove all operators and parentheses, then find unique letters
+                // Extract unique uppercase letters as variables.
                 const cleanExpr = expression.replace(/[^A-Z]/g, '');
                 const variables = [...new Set(cleanExpr)];
                 return variables.sort();
             }
             
             tokenize(expression) {
-                // Convert expression to tokens (variables, operators, parentheses)
-                // Add spaces around all operators and parentheses to ensure they are tokenized correctly
+                // Add spaces around all operators and parentheses to ensure they are split correctly.
                 const spacedExpression = expression
                     .replace(/([&v→↔~()])/g, ' $1 ')
                     .trim();
-
-                // Split by spaces and filter out any empty strings
                 const tokens = spacedExpression.split(/\s+/).filter(token => token.length > 0);
 
                 return tokens;
@@ -448,10 +454,9 @@
                 for (let token of tokens) {
                     if (token in this.operators) {
                         if (this.operators[token].type === 'unary') {
-                            // Unary operators (like ¬) have highest precedence and are right-associative
+                            // Unary operators (like ~) have high precedence.
                             stack.push(token);
                         } else {
-                            // Binary operators
                             while (stack.length > 0 && 
                                    stack[stack.length - 1] !== '(' &&
                                    this.operators[token].precedence <= this.operators[stack[stack.length - 1]].precedence) {
@@ -469,7 +474,7 @@
                             stack.pop(); // Remove '('
                         }
                     } else {
-                        output.push(token); // Variable
+                        output.push(token); // Assumed to be a variable.
                     }
                 }
                 
@@ -509,13 +514,14 @@
                     return;
                 }
                 
-                // Validate for lowercase variables (excluding 'v' for OR)
+                // Validate that variables are uppercase letters. 'v' is allowed as the OR operator.
                 const invalidChars = expression.match(/[a-uw-z]/g);
                 if (invalidChars) {
                     this.showMessage(`Invalid characters found: ${[...new Set(invalidChars)].join(', ')}. Variables must be uppercase letters.`, 'error');
                     return;
                 }
 
+                // Enforce that binary operations are fully parenthesized for simpler parsing.
                 if (!this.isWellFormed(expression)) {
                     this.showMessage('Expression is not well-formed. All binary operations (e.g., A & B) must be enclosed in parentheses like (A & B).', 'error');
                     return;
@@ -532,12 +538,12 @@
                     const tokens = this.tokenize(expression);
                     const postfix = this.infixToPostfix(tokens);
 
-                    // Find the main operator to highlight it
+                    // Find the main operator to highlight its column in the table.
                     let mainOperatorIndex = -1;
                     if (postfix.length > 0) {
                         const mainOperatorToken = postfix[postfix.length - 1];
                         if (mainOperatorToken in this.operators) {
-                            // Find the last occurrence of this operator in the original tokens
+                            // Find the last occurrence of this operator in the original tokens.
                             // This is a simple way to find it, works for many cases.
                             for (let i = tokens.length - 1; i >= 0; i--) {
                                 if (tokens[i] === mainOperatorToken) {
@@ -545,15 +551,13 @@
                                     break;
                                 }
                             }
-                        } else if (tokens.length === 1) { // Case for a single variable like "P"
+                        } else if (tokens.length === 1) { // Handle a single variable like "P".
                             mainOperatorIndex = 0;
                         }
                     }
                     
-                    // Generate all possible truth value combinations (starting with true)
                     const combinations = this.generateCombinations(variables.length);
                     
-                    // Create the truth table
                     this.renderTruthTable(variables, tokens, combinations, postfix, mainOperatorIndex);
                     this.showMessage(`Truth table generated successfully for: ${expression}`, 'success');
                     
@@ -569,15 +573,15 @@
                 
                 for (let i = 0; i < total; i++) {
                     const combination = [];
-                    // Start with true values first (reverse the bit order)
+                    // Generate a single combination using bitwise operations.
+                    // This naturally creates combinations from all-false to all-true.
                     for (let j = n - 1; j >= 0; j--) {
-                        // Use bit manipulation to get the value, but reverse the order
                         combination.push(Boolean(i & (1 << j)));
                     }
                     combinations.push(combination);
                 }
                 
-                // Reverse the entire array to start with all true values
+                // Reverse the array to display the conventional order (all-true to all-false).
                 return combinations.reverse();
             }
             
@@ -590,12 +594,12 @@
                 let balance = 0;
                 for (const char of expression) {
                     if (char === '(') balance++;
-                    else if (char === ')') balance--;
-                    if (balance < 0) return false; // Closing parenthesis before an opening one
+                    else if (char === ')') balance--; // Closing parenthesis before an opening one.
+                    if (balance < 0) return false; 
                 }
                 if (balance !== 0) return false; // Unbalanced parentheses
 
-                // Check for binary operators outside of parentheses
+                // Check for binary operators that are not enclosed in parentheses.
                 balance = 0;
                 for (const char of expression) {
                     if (char === '(') balance++;
@@ -616,9 +620,8 @@
                     const th = document.createElement('th'); th.textContent = variable; headerRow.appendChild(th);
                 });
                 
-                // Pre-process tokens to merge parentheses for display
+                // Pre-process tokens to merge parentheses with their adjacent tokens for a cleaner table display.
                 let displayTokens = [...expressionTokens];
-                // Merge right parentheses (backwards)
                 for (let i = displayTokens.length - 1; i >= 0; i--) {
                     if (displayTokens[i] === ')') {
                         for (let j = i - 1; j >= 0; j--) {
@@ -630,7 +633,6 @@
                         }
                     }
                 }
-                // Merge left parentheses (forwards)
                 for (let i = 0; i < displayTokens.length; i++) {
                     if (displayTokens[i] === '(') {
                         for (let j = i + 1; j < displayTokens.length; j++) {
@@ -644,7 +646,7 @@
                 }
 
                 displayTokens.forEach((token, index) => {
-                    if (token === null) return; // Skip merged parentheses
+                    if (token === null) return; // Skip null tokens from merged parentheses.
                     const th = document.createElement('th');
                     th.textContent = token;
                     th.classList.add('result-separator');
@@ -662,7 +664,6 @@
                     const row = document.createElement('tr');
                     const values = {};
                     
-                    // Add variable values
                     variables.forEach((variable, index) => {
                         values[variable] = combo[index];
                         
@@ -672,12 +673,11 @@
                         row.appendChild(td);
                     });
                     
-                    // Calculate and add result
                     try {
                         const allResults = this.evaluateWithIntermediateSteps(expressionTokens, postfix, values);
                         
                         expressionTokens.forEach((token, index) => {
-                            if (displayTokens[index] === null) return; // Don't create a cell for a merged parenthesis
+                            if (displayTokens[index] === null) return; // Don't create a cell for a merged parenthesis.
 
                             const td = document.createElement('td');
                             td.classList.add('result-separator');
@@ -689,7 +689,7 @@
                                 const result = allResults[index];
                                 td.textContent = result ? 'T' : 'F';
                                 td.classList.add(result ? 'true-cell' : 'false-cell');
-                            } // else: it's a parenthesis that wasn't merged, leave cell blank
+                            } // else: it's a parenthesis that wasn't merged, so leave the cell blank.
                             row.appendChild(td);
                         });
 
@@ -708,9 +708,9 @@
 
             evaluateWithIntermediateSteps(expressionTokens, postfix, values) {
                 const stack = [];
-                const results = {}; // Store results by original token index
+                const results = {}; // Store results mapped to their original token index.
 
-                // Create a map from postfix token to its original index
+                // Create a map from each postfix token to its original index in the infix expression.
                 const tokenIndices = {};
                 const tempTokens = [...expressionTokens];
                 for (const pToken of postfix) {
@@ -718,7 +718,7 @@
                         const idx = tempTokens.indexOf(pToken);
                         if (!tokenIndices[pToken]) tokenIndices[pToken] = [];
                         tokenIndices[pToken].push(idx);
-                        tempTokens[idx] = null; // Mark as used
+                        tempTokens[idx] = null; // Mark as used to handle duplicate tokens correctly.
                     }
                 }
 
@@ -749,9 +749,8 @@
             
             showMessage(message, type) {
                 const messageArea = document.getElementById('messageArea');
-                messageArea.innerHTML = `<div class="${type}-message">${message}</div>`;
+                messageArea.innerHTML = `<div class="${type}-message info-box">${message}</div>`;
                 
-                // Auto-hide success messages after 5 seconds
                 if (type === 'success') {
                     setTimeout(() => {
                         this.clearMessage();
@@ -764,7 +763,6 @@
             }
         }
         
-        // Initialize the application when the page loads
         document.addEventListener('DOMContentLoaded', () => {
             new TruthTableGenerator();
         });
