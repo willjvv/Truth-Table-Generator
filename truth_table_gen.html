@@ -18,6 +18,7 @@
             --error-text-color: #721c24;
             --white-color: #fff;
             --border-color: #ddd;
+            --border-dark-color: #3d3d3d;
             --border-radius-sm: 6px;
             --border-radius-md: 8px;
             --border-radius-lg: 15px;
@@ -202,29 +203,45 @@
 
         .table-container {
             overflow-x: auto;
+            overflow-y: hidden; /* Hide vertical overflow to ensure clipping */
             border-radius: var(--border-radius-md);
             box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            border: 3px solid var(--border-dark-color); /* Add the border to the container */
         }
 
         #truthTable {
             width: 100%;
-            border-collapse: collapse;
+            border-collapse: separate; /* Change to separate to respect container's border-radius */
+            border-spacing: 0;
             font-size: 1.2rem;
         }
 
         th {
             background: #34495e;
             color: var(--white-color);
-            padding: 15px;
+            padding: 15px 12px;
             text-align: center;
             font-weight: 600;
-            border: 2px solid #3d3d3d;
+            border-bottom: 2px solid var(--border-dark-color);
+            border-right: 2px solid var(--border-dark-color);
         }
 
         #truthTable td {
             padding: 12px;
             text-align: center;
-            border: 2px solid #3d3d3d;
+            border-bottom: 2px solid var(--border-dark-color);
+            border-right: 2px solid var(--border-dark-color);
+        }
+
+        /* Remove the right border from the last cell of each row */
+        #truthTable th:last-child,
+        #truthTable td:last-child {
+            border-right: none;
+        }
+
+        /* Remove the bottom border from the last row's cells */
+        #truthTable tr:last-child td {
+            border-bottom: none;
         }
 
         tr:nth-child(even) {
@@ -257,7 +274,7 @@
         }
 
         .result-separator {
-            border-left: 2px solid var(--secondary-color) !important;
+            border-left: 2px solid var(--border-dark-color) !important;
         }
 
         .error-message {
@@ -645,11 +662,13 @@
                     }
                 }
 
-                displayTokens.forEach((token, index) => {
+                displayTokens.forEach((token, index, arr) => {
                     if (token === null) return; // Skip null tokens from merged parentheses.
                     const th = document.createElement('th');
                     th.textContent = token;
-                    th.classList.add('result-separator');
+                    if (arr.slice(0, index).filter(t => t !== null).length === 0) {
+                        th.classList.add('result-separator');
+                    }
                     th.style.minWidth = '30px';
                     if (index === mainOperatorIndex) {
                         th.classList.add('main-operator-header');
@@ -676,11 +695,13 @@
                     try {
                         const allResults = this.evaluateWithIntermediateSteps(expressionTokens, postfix, values);
                         
-                        expressionTokens.forEach((token, index) => {
+                        expressionTokens.forEach((token, index, arr) => {
                             if (displayTokens[index] === null) return; // Don't create a cell for a merged parenthesis.
 
                             const td = document.createElement('td');
-                            td.classList.add('result-separator');
+                            if (displayTokens.slice(0, index).filter(t => t !== null).length === 0) {
+                                td.classList.add('result-separator');
+                            }
                             if (index === mainOperatorIndex) {
                                 td.classList.add('main-operator-col');
                             }
@@ -697,7 +718,6 @@
                         const resultTd = document.createElement('td');
                         resultTd.textContent = 'Error';
                         resultTd.className = 'false-cell';
-                        resultTd.colSpan = expressionTokens.length;
                         resultTd.classList.add('result-separator');
                         row.appendChild(resultTd);
                     }
