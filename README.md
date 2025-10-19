@@ -1,153 +1,109 @@
 # Truth-Table-Generator
-Input a logical expression in LaTeX format and the program will calculate and display its truth table.
+A web-based tool to generate truth tables for logical expressions. Simply open `truth_table_gen.html` in your browser, enter an expression, and see the resulting truth table.
 
 # Supported Operators
-- \land (and)
-- \lor (or)
-- \lnot (not)
-- \rightarrow (implies)
-- \leftrightarrow (iff)
+*   `~` (NOT / Tilde)
+*   `&` (AND / Ampersand)
+*   `v` (OR / Wedge)
+*   `→` (IMPLIES / Arrow)
+*   `↔` (IFF / Double Arrow)
+
+**Note:** Variables must be uppercase letters (e.g., P, Q, R). All binary operations must be enclosed in parentheses, for example `(P & Q)`.
 
 # Examples
-Expression: p \land q
+Expression: `(P & Q)`
 
-+----+----+-----------+
++----+----+---------+
 
-| p  | q  | p \land q |
+| P  | Q  | (P & Q) |
 
-+----+----+-----------+
++----+----+---------+
 
-| F  | F  |     F     |
+| T  | T  |    T    |
 
-| F  | T  |     F     |
+| T  | F  |    F    |
 
-| T  | F  |     F     |
+| F  | T  |    F    |
 
-| T  | T  |     T     |
+| F  | F  |    F    |
 
-+----+----+-----------+
++----+----+---------+
 
 
-Expression: p \lor q
+Expression: `(P v Q)`
 
-+----+----+----------+
++----+----+---------+
 
-| p  | q  | p \lor q |
+| P  | Q  | (P v Q) |
 
-+----+----+----------+
++----+----+---------+
 
-| F  | F  |    F     |
+| T  | T  |    T    |
 
-| F  | T  |    T     |
+| T  | F  |    T    |
 
-| T  | F  |    T     |
+| F  | T  |    T    |
 
-| T  | T  |    T     |
+| F  | F  |    F    |
 
-+----+----+----------+
++----+----+---------+
 
 
-Expression: \lnot p
+Expression: `(~P)`
 
-+----+---------+
++---+------+
 
-| p  | \lnot p |
+| P | (~P) |
 
-+----+---------+
++---+------+
 
-| F  |    T    |
+| T |  F   |
 
-| T  |    F    |
+| F |  T   |
 
-+----+---------+
++---+------+
 
 
-Expression: p \rightarrow q
+Expression: `(P → Q)`
 
-+----+----+-----------------+
++----+----+---------+
 
-| p  | q  | p \rightarrow q |
+| P  | Q  | (P → Q) |
 
-+----+----+-----------------+
++----+----+---------+
 
-| F  | F  |        T        |
+| T  | T  |    T    |
 
-| F  | T  |        T        |
+| T  | F  |    F    |
 
-| T  | F  |        F        |
+| F  | T  |    T    |
 
-| T  | T  |        T        |
+| F  | F  |    T    |
 
-+----+----+-----------------+
++----+----+---------+
 
 
-Expression: p \leftrightarrow q
+Expression: `((P & Q) v (~R))`
 
-+----+----+---------------------+
++---+---+---+-----------------+
 
-| p  | q  | p \leftrightarrow q |
+| P | Q | R | ((P & Q) v (~R)) |
 
-+----+----+---------------------+
++---+---+---+-----------------+
 
-| F  | F  |          T          |
+| T | T | T |        T        |
 
-| F  | T  |          F          |
+| T | T | F |        T        |
 
-| T  | F  |          F          |
+| T | F | T |        F        |
 
-| T  | T  |          T          |
+| T | F | F |        T        |
 
-+----+----+---------------------+
+| F | T | T |        F        |
 
+| F | T | F |        T        |
 
-Expression: (p \land q) \lor \lnot r
+| F | F | T |        F        |
 
-+----+----+----+--------------------------+
-
-| p  | q  | r  | (p \land q) \lor \lnot r |
-
-+----+----+----+--------------------------+
-
-| F  | F  | F  |            T             |
-
-| F  | F  | T  |            F             |
-
-| F  | T  | F  |            T             |
-
-| F  | T  | T  |            F             |
-
-| T  | F  | F  |            T             |
-
-| T  | F  | T  |            F             |
-
-| T  | T  | F  |            T             |
-
-| T  | T  | T  |            T             |
-
-+----+----+----+--------------------------+
-
-
-Expression: p \land (q \lor r)
-
-+----+----+----+--------------------+
-
-| p  | q  | r  | p \land (q \lor r) |
-
-+----+----+----+--------------------+
-
-| F  | F  | F  |         F          |
-
-| F  | F  | T  |         F          |
-
-| F  | T  | F  |         F          |
-
-| F  | T  | T  |         F          |
-
-| T  | F  | F  |         F          |
-
-| T  | F  | T  |         T          |
-
-| T  | T  | F  |         T          |
-
-| T  | T  | T  |         T          |
-+----+----+----+--------------------+
+| F | F | F |        T        |
++---+---+---+-----------------+
